@@ -1,4 +1,4 @@
-$(document).ready(function(){
+
   var base = 36;
   var default_board_width = 5;
   var default_board_height = 5;
@@ -357,7 +357,7 @@ $(document).ready(function(){
       }
     }
   }
-  function newCell(x, y, value){
+  function newCell(value){
     if (value === undefined){
       value = '..';
     }
@@ -370,24 +370,22 @@ $(document).ready(function(){
       $.extend(device, devices[value.slice(0,1)]);
       integerPart = parseInt(value.slice(1,2),36);
     } else {
+      $.extend(device, devices[""]);
       integerPart = parseInt(value, 36);
     }
-    if (device.hasValue){
-      if (integerPart === "" || integerPart >= device.range){
-        throw new Exception("Cannot parse cell with value:\""+value+"\"");
-      }
+    if (isNaN(integerPart)){
+      throw new Error("Cannot parse cell with value:\""+value+"\"")
+    }
+    if (integerPart >= device.range){
+      throw new Error("Number \""+integerPart+"\" out of range");
     }
     var cell = {
-      value: value,
+      value: integerPart,
       name: device.name,
       initFunction: device.initFunction,
       processFunction: device.processFunction,
       hasSideEffects: device.hasSideEffects,
-      deterministic: device.deterministic,
-      x: x,
-      y: y,
+      deterministic: device.deterministic
     };
     return cell;
   }
-
-});
